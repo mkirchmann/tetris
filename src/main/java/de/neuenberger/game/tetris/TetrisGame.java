@@ -32,16 +32,12 @@ public class TetrisGame extends JFrame {
 				int keyCode = e.getKeyCode();
 				if (keyCode == 37) { // left
 					tetrisModel.moveTileLeft();
-					tetrisController.update();
 				} else if (keyCode == 39) { // right
 					tetrisModel.moveTileRight();
-					tetrisController.update();
 				} else if (keyCode == 40) {
 					gameLogic.nextTick();
-					tetrisController.update();
 				} else if (keyCode == 38) {
 					tetrisModel.rotateForward();
-					tetrisController.update();
 				} else {
 					System.out.println("unknown kc: " + keyCode);
 				}
@@ -55,12 +51,13 @@ public class TetrisGame extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			gameLogic.nextTick();
-			tetrisController.update();
 		}
 	};
 	Timer gameTickTimer = new Timer(500, timerListener);
 
 	public TetrisGame() {
+		this.setSize(250,300);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		BorderLayout borderLayout = new BorderLayout();
 		this.setLayout(borderLayout);
 
@@ -111,7 +108,7 @@ public class TetrisGame extends JFrame {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				// model.setBites(Collections.<Vector2D> emptyList());
-
+				tetrisModel.removeBricksAtLine(tetrisModel.getHeight() - 1);
 			}
 		});
 		toolbar.add(cheatButton);

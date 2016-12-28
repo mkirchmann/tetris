@@ -7,7 +7,7 @@ import de.neuenberger.game.core.Vector2D;
 public class TetrisFallingTile {
 	private final TetrisTiles tetrisTile;
 
-	private List<Vector2D> currentCompositionPosition;
+	private List<Vector2D> currentTileRotationPosition;
 
 	TetrisFallingTile() {
 		this(TetrisTiles.random());
@@ -15,19 +15,19 @@ public class TetrisFallingTile {
 
 	TetrisFallingTile(TetrisTiles composition) {
 		this.tetrisTile = composition;
-		currentCompositionPosition = composition.getInitialPosition();
+		currentTileRotationPosition = composition.getInitialPosition();
 	}
 
 	public void rotateForward() {
-		currentCompositionPosition = tetrisTile.getNextPositionFor(currentCompositionPosition);
+		currentTileRotationPosition = tetrisTile.getNextPositionFor(currentTileRotationPosition);
 	}
 
 	public void rotateBackward() {
-		currentCompositionPosition = tetrisTile.getPreviousPositionFor(currentCompositionPosition);
+		currentTileRotationPosition = tetrisTile.getPreviousPositionFor(currentTileRotationPosition);
 	}
 
 	public List<Vector2D> getCurrentTileRotationPosition() {
-		return currentCompositionPosition;
+		return currentTileRotationPosition;
 	}
 
 	public static TetrisFallingTile createRandom() {

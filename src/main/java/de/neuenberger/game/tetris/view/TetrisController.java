@@ -2,6 +2,8 @@ package de.neuenberger.game.tetris.view;
 
 import java.awt.Color;
 import java.awt.Image;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.ImageIcon;
 
@@ -24,6 +26,13 @@ public class TetrisController {
 	public TetrisController(TetrisModel model, GameImageProducer gameImageProducer) {
 		this.model = model;
 		this.gameImageProducer = gameImageProducer;
+		model.addPropertyChangeListener(new PropertyChangeListener() {
+			
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				update();
+			}
+		});
 	}
 
 	private static Image getImage(String string) {

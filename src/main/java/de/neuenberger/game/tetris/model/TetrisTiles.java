@@ -31,6 +31,7 @@ public enum TetrisTiles {
 		this.rotationVector = Collections.unmodifiableList(rotationVector);
 		stringToInteger = Collections.unmodifiableMap(tempVectorToIntMap);
 	}
+
 	public static TetrisTiles random() {
 		Random random = new Random();
 		TetrisTiles[] values = values();

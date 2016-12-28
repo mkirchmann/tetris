@@ -1,5 +1,8 @@
 package de.neuenberger.game.tetris.model;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -21,6 +24,8 @@ public class TetrisModel {
 	private int height;
 	private Vector2D moveDownVector = new Vector2D(0, 1);
 
+	private PropertyChangeSupport support = new PropertyChangeSupport(this);
+
 	public TetrisModel(int width, int height) {
 		this.width = width;
 		this.height = height;
@@ -39,9 +44,16 @@ public class TetrisModel {
 				.anyMatch(v -> (v.getX() < 0 || v.getX() >= getWidth()));
 		boolean occupied = currentTileRotationPosition.stream().anyMatch(v -> hasBrickAt(v));
 		if (!invalid && !occupied) {
-			currentFallingTilePosition = newMovedPosition;
-			currentFallingTilePositionTransposed = null;
+			setCurrentFallingTilePosition(newMovedPosition);
+			clearCurrentFallingTilePositionTransposed();
 		}
+	}
+
+	private void setCurrentFallingTilePosition(Vector2D newMovedPosition) {
+		PropertyChangeEvent event = new PropertyChangeEvent(this, "currentFallingTilePosition",
+				this.currentFallingTilePosition, newMovedPosition);
+		currentFallingTilePosition = newMovedPosition;
+		support.firePropertyChange(event);
 	}
 
 	private boolean hasBrickAt(Vector2D v) {
@@ -54,18 +66,24 @@ public class TetrisModel {
 
 	public void rotateForward() {
 		currentFallingTile.rotateForward();
-		currentFallingTilePositionTransposed = null;
+		clearCurrentFallingTilePositionTransposed();
 	}
 
 	public void rotateBackward() {
 		currentFallingTile.rotateBackward();
-		currentFallingTilePositionTransposed = null;
-		;
+		clearCurrentFallingTilePositionTransposed();
 	}
 
 	public void moveTileDown() {
 		currentFallingTilePosition = currentFallingTilePosition.moveY(1);
+		clearCurrentFallingTilePositionTransposed();
+	}
+
+	private void clearCurrentFallingTilePositionTransposed() {
+		PropertyChangeEvent event = new PropertyChangeEvent(this, "currentFallingTilePositionTransposed",
+				currentFallingTilePositionTransposed, null);
 		currentFallingTilePositionTransposed = null;
+		support.firePropertyChange(event);
 	}
 
 	public List<Vector2D> getCurrentFallingTilePositionTransposed() {
@@ -90,13 +108,14 @@ public class TetrisModel {
 
 	public void addAllBricks(List<Vector2D> tileTransposed) {
 		bricks.addAll(tileTransposed);
+		fireBricksChanged();
 	}
 
 	public void putNextFallingTile(TetrisFallingTile nextFallingTile) {
 		currentFallingTile = this.nextFallingTile;
 		this.nextFallingTile = nextFallingTile;
 		this.currentFallingTilePosition = new Vector2D(width / 2, -1);
-		currentFallingTilePositionTransposed = null;
+		clearCurrentFallingTilePositionTransposed();
 	}
 
 	public int getWidth() {
@@ -129,5 +148,27 @@ public class TetrisModel {
 			List<Vector2D> movedBricks = Vector2D.move(list, moveDownVector);
 			bricks.addAll(movedBricks);
 		}
+		fireBricksChanged();
+	}
+
+	private void fireBricksChanged() {
+		PropertyChangeEvent event = new PropertyChangeEvent(this, "bricks", null, bricks);
+		support.firePropertyChange(event);
+	}
+
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		support.addPropertyChangeListener(listener);
+	}
+
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		support.removePropertyChangeListener(listener);
+	}
+
+	public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+		support.addPropertyChangeListener(propertyName, listener);
+	}
+
+	public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+		support.removePropertyChangeListener(propertyName, listener);
 	}
 }
