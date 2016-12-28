@@ -29,6 +29,8 @@ public class TetrisModel {
 	public TetrisModel(int width, int height) {
 		this.width = width;
 		this.height = height;
+		putNextFallingTile(TetrisFallingTile.createRandom());
+		putNextFallingTile(TetrisFallingTile.createRandom());
 	}
 
 	public void moveTileLeft() {
